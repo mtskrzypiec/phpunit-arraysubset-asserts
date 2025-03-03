@@ -8,6 +8,7 @@ use ArrayObject;
 use Countable;
 use DMS\PHPUnitExtensions\ArraySubset\ArrayAccessible;
 use DMS\PHPUnitExtensions\ArraySubset\Constraint\ArraySubset;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\SelfDescribing;
 use PHPUnit\Framework\TestCase;
@@ -22,25 +23,22 @@ use function sprintf;
  */
 final class ArraySubsetTest extends TestCase
 {
-    /**
-     * @return mixed[]
-     */
     public static function evaluateDataProvider(): array
     {
         return [
-            'loose array subset and array other'        => [
+            'loose array subset and array other' => [
                 'expected' => true,
                 'subset'   => ['bar' => 0],
                 'other'    => ['foo' => '', 'bar' => '0'],
                 'strict'   => false,
             ],
-            'strict array subset and array other'       => [
+            'strict array subset and array other' => [
                 'expected' => false,
                 'subset'   => ['bar' => 0],
                 'other'    => ['foo' => '', 'bar' => '0'],
                 'strict'   => true,
             ],
-            'loose array subset and ArrayObject other'  => [
+            'loose array subset and ArrayObject other' => [
                 'expected' => true,
                 'subset'   => ['bar' => 0],
                 'other'    => new ArrayObject(['foo' => '', 'bar' => '0']),
@@ -55,19 +53,10 @@ final class ArraySubsetTest extends TestCase
         ];
     }
 
-    /**
-     * @param array|Traversable|mixed[] $subset
-     * @param array|Traversable|mixed[] $other
-     *
-     * @throws ExpectationFailedException
-     * @throws InvalidArgumentException|Exception
-     *
-     * @dataProvider evaluateDataProvider
-     */
+    #[DataProvider('evaluateDataProvider')]
     public function testEvaluate(bool $expected, $subset, $other, bool $strict): void
     {
         $constraint = new ArraySubset($subset, $strict);
-
         $this->assertSame($expected, $constraint->evaluate($other, '', true));
     }
 
